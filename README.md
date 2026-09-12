@@ -76,6 +76,75 @@ GitHub Actions configuration checks builds and tests on Linux, macOS, and
 Windows, plus formatting, Clippy, and local package verification on Linux.
 There is no automatic publishing workflow.
 
+With `just` installed, run `just` to list tasks or `just verify` to run the
+checks above. `just fmt` applies formatting; `just lint` checks formatting and
+runs Clippy. Cargo commands remain usable directly without `just`.
+
+## Release process
+
+Releases are maintained manually. Publishing to crates.io, pushing a Git tag,
+and creating a GitHub release are separate operations. Do not release from a
+dirty working tree or publish automatically as part of routine validation.
+
+### Prepare
+
+1. Update `version` in `Cargo.toml` and the dependency example in this README.
+   Choose a new, unused version; a published version cannot be overwritten.
+2. If updating the grammar, update the upstream revision, generated files,
+   checksums, and any changed license notices together. Add regression tests
+   for relevant grammar changes.
+3. Run `just verify` and inspect `cargo package --list`. The package should
+   contain the binding, generated parser and header, build script, README,
+   license, and Cargo metadata, but not repository-only automation.
+4. Review and commit the intended changes, push `main`, and wait for all CI
+   jobs on that exact commit to pass. Confirm `git status --short` is empty.
+
+### Publish
+
+A crates.io account with a verified email and permission to publish this crate
+is required. Authenticate locally with `cargo login`; never put tokens in
+source files, command arguments, or issue/PR discussions. Prefer a short-lived,
+crate-scoped token. Subsequent releases require `publish-update`; the initial
+release used `publish-new`.
+
+From the clean, CI-verified release commit, run:
+
+```sh
+just publish-dry-run
+cargo publish
+```
+
+The dry run does not upload or reserve a version. `cargo publish` uploads the
+archive and normally waits for registry availability. Confirm the intended
+version is available on crates.io and check that its docs.rs build succeeds.
+Published versions are immutable. Yanking a version is not deletion; fixes
+normally require a new version.
+
+### Tag and announce
+
+After successful publication, create an annotated tag on the exact release
+commit and push only that tag. Replace `VERSION` below with the version in
+`Cargo.toml`, and `RELEASE_COMMIT` with the full CI-verified commit SHA:
+
+```sh
+git tag -a vVERSION RELEASE_COMMIT -m "Release tree-sitter-vlang VERSION"
+git push origin refs/tags/vVERSION
+```
+
+Verify the remote tag points to the release commit. Optionally create a GitHub
+release for that tag with a summary of changes and the pinned upstream grammar
+revision. Revoke a one-off publishing token when finished.
+
+### If a step fails
+
+- If publishing fails, fix the reported problem and check registry state before
+  retrying, especially after a timeout: the upload may already have succeeded.
+- If publication succeeded but tagging or pushing failed, finish those steps
+  using the same release commit; do not publish again or bump the version just
+  to retry a Git operation.
+- Do not move an existing release tag or try to overwrite a published version.
+  Investigate mismatches before proceeding.
+
 ## License
 
 MIT. See [LICENSE](LICENSE) for the retained upstream copyright and license
