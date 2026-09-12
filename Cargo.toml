@@ -1,0 +1,31 @@
+[package]
+name = "tree-sitter-vlang"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "V language grammar for Tree-sitter, from vlang/v-analyzer"
+keywords = ["tree-sitter", "vlang", "parsing", "grammar"]
+categories = ["parsing", "text-editors"]
+readme = "README.md"
+repository = "https://github.com/phosfox/tree-sitter-vlang"
+include = ["Cargo.toml", "build.rs", "src/**", "LICENSE", "README.md"]
+
+[dependencies]
+tree-sitter-language = "0.1"
+
+[build-dependencies]
+cc = "1"
+
+[dev-dependencies]
+tree-sitter = "0.26"
+
+[package.metadata.upstream]
+repository = "https://github.com/vlang/v-analyzer"
+revision = "925d4570d1668746762a2cdf0ecb9a25be704a67"
+directory = "tree_sitter_v"
+abi = 15
+
+[package.metadata.upstream.sha256]
+"src/parser.c" = "4efcf048254b233f7c688850498eb1c3dab58bdfe27b66ab708f56efbef72ea3"
+"src/tree_sitter/parser.h" = "180b893c8734778fd32f372dfbc27bd6ad1cd2221f26150b31256ff6716320d2"
+"LICENSE" = "abfabe98680cd5bef27c8ca64549b2f45df38f028509fe6f9eca7a52a5af72f6"
