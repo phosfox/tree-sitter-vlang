@@ -5,12 +5,17 @@ Rust bindings for the V language Tree-sitter grammar from
 This package wraps a pinned upstream grammar; it is not a separate grammar
 implementation or an official upstream release.
 
-Version 0.1.0 is being prepared locally and has not been published to crates.io.
-
 ## Usage
 
-The Rust crate name is `tree_sitter_vlang`. With this package available as a
-dependency and `tree-sitter = "0.26"`, load the grammar as follows:
+Add these dependencies to your `Cargo.toml`:
+
+```toml
+[dependencies]
+tree-sitter-vlang = "0.1.0"
+tree-sitter = "0.26"
+```
+
+The Rust crate name is `tree_sitter_vlang`. Load the grammar as follows:
 
 ```rust
 let mut parser = tree_sitter::Parser::new();
